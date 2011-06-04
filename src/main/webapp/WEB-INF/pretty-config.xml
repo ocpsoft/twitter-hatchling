@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<pretty-config xmlns="http://ocpsoft.com/prettyfaces/3.2.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.2.1 http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.2.1.xsd">
+	<url-mapping id="home">
+		<pattern value="/" />
+		<view-id value="/faces/index.xhtml" />
+		<action>#{sideBySide.init}</action>
+	</url-mapping>
+	<url-mapping id="admin">
+		<pattern value="/admin" />
+		<view-id value="/faces/admin.xhtml" />
+		<action>#{adminBean.init}</action>
+	</url-mapping>
+	<url-mapping id="newFilter">
+		<pattern value="/newfilter" />
+		<view-id value="/faces/scaffold/keyword/create.xhtml" />
+	</url-mapping>
+	<url-mapping id="listFilters">
+		<pattern value="/filters" />
+		<view-id value="/faces/scaffold/keyword/list.xhtml" />
+	</url-mapping>
+	<url-mapping id="filtertrack-view">
+		<pattern value="/filter/#{id}" />
+		<view-id value="/faces/scaffold/keyword/view.xhtml" />
+	</url-mapping>
+	<url-mapping id="logout">
+		<pattern value="/logout"></pattern>
+		<view-id value="/faces/index.xhtml" />
+		<action>#{sessionBean.logout}</action>
+	</url-mapping>
+</pretty-config>

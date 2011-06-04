@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<f:view contentType="text/html">
+
+<h:head>
+	<title>OCPSoft Research: Side-by-side | Technology | Twitter | Comparison"</title>
+	
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<h:outputStylesheet name="research.css" />
+	<h:outputScript name="autolink.js" />
+	
+	<style type="text/css">
+		.disabled {
+			color: gray;
+		}
+		.rf-cal-today {
+		    background-color: #FFF;
+		    color: #000;
+		    font-weight: inherit;
+		}
+		.bold {
+		    font-weight: bold;
+		}
+		.tweet {
+			font-size: 15px;
+		}
+		.tweet > a {
+			font-size: 15px;
+		}
+		li.tweet {
+			padding-bottom: 5px;
+			border-bottom: 1px #ddd solid;
+		}
+	</style>
+</h:head>
+
+<h:body>
+
+
+	
+	<script type="text/javascript">
+		if (!window["busystatus"]) {
+			var busystatus = {};
+		}
+		 
+		busystatus.onStatusChange = function onStatusChange(data) {
+			var status = data.status;
+		 
+			if (status === "begin") { // turn on busy indicator
+				document.body.style.cursor = 'wait';
+			} else { // turn off busy indicator, on either "complete" or "success"
+				document.body.style.cursor = 'auto';
+			}
+		};
+		 
+		jsf.ajax.addOnEvent(busystatus.onStatusChange);
+	</script>
+
+<center>
+
+    <div id="line_chart"></div>
+    
+	<h:form>
+		<a4j:jsFunction name="getData" data="#{sideBySide.chartData}" oncomplete="drawChart(event)" />
+	
+		<script type="text/javascript">
+			// Load the Visualization API and the piechart package.
+			google.load('visualization', '1', {'packages':['corechart']});
+	
+			// Set a callback to run when the Google Visualization API is loaded.
+			google.setOnLoadCallback(init);
+
+			if (!window["chart"]) {
+				var chart = {};
+			}
+			
+			function init()
+			{
+				chart = new google.visualization.LineChart(document.getElementById('line_chart'));
+				getData();
+			}
+	
+			function drawChart(event) {
+				// Everything is loaded. Lets draw our chart...
+
+				var data = new google.visualization.DataTable();
+				data.addColumn('string', 'Date');
+				data.addColumn('number', event.data.left);
+				data.addColumn('number', event.data.right);
+
+				data.addRows(event.data.rows);
+				
+				chart.draw(data, {
+					curveType: 'none',
+					legend: 'top',
+	                vAxis: {
+		                minValue: 0,
+		                baseline: 0
+	                }, 
+	                hAxis: {
+		                showTextEvery: event.data.showTextEvery,
+		                textStyle: {
+			                color: 'grey',
+			                fontSize: 8
+		                },
+	                	textPosition: 'in'
+	                },
+					pointSize: 3,
+					colors: ["#4A91C3", "#F70"],
+					width: 800, 
+					height: 240, 
+					is3D: true, 
+					title: null
+				});  
+	
+			}
+		</script>
+	
+		<h2 style="padding-bottom: 6px;">Fight!
+		<h:selectOneMenu value="#{sideBySide.left}" valueChangeListener="#{sideBySide.leftValueChanged}">
+			<f:selectItem itemDisabled="true" itemLabel="Choose Technology"/>
+			<f:selectItems value="#{sideBySide.techWords}" var="k" itemLabel="#{k.text}"/>
+			<a4j:ajax execute="@form" oncomplete="getData()" render="tweets" />
+		</h:selectOneMenu>
+		<h:outputText value=" vs. " />
+		<h:selectOneMenu value="#{sideBySide.right}" valueChangeListener="#{sideBySide.rightValueChanged}">
+			<f:selectItem itemDisabled="true" itemLabel="Choose Technology"/>
+			<f:selectItems value="#{sideBySide.techWords}" var="k" itemLabel="#{k.text}"/>
+			<a4j:ajax execute="@form" oncomplete="getData()" render="tweets" />
+		</h:selectOneMenu> 
+		
+		
+		<h:outputText value=" : " />
+		<rich:calendar id="begin" value="#{sideBySide.begin}" dataModel="#{sideBySideCalendar.begin}" 
+			showWeekDaysBar="false" showWeeksBar="false">
+			<a4j:ajax execute="@form" oncomplete="getData()" render="end tweets" />
+		</rich:calendar>
+		<h:outputText value="->" />
+		<rich:calendar id="end" value="#{sideBySide.end}" dataModel="#{sideBySideCalendar.end}" 
+			showWeekDaysBar="false" showWeeksBar="false">
+			<a4j:ajax execute="@form" oncomplete="getData()" render="begin tweets" />
+		</rich:calendar>
+		</h2>
+		
+		<p />
+		<h:panelGroup id="tweets">
+			<div class="featured" style="padding:0px;">
+			<table width="100%" cellspacing="15px;">
+				<tr valign="top">
+					<td width="50%" style="max-width: 50%" class="inside">						
+						<h2 style="margin-bottom:15px;">
+							<a style="font-size: 25px; color: #4A91C3; text-decoration: none" 
+								href="https://twitter.com/#!/search/#{sideBySide.leftLink}">#{sideBySide.left.text}</a>
+						</h2>
+					</td>
+					<td width="50%" style="max-width: 50%" class="inside">						
+						<h2 style="margin-bottom:15px;">
+							<a style="font-size: 25px; color: #F70; text-decoration: none" 
+								href="https://twitter.com/#!/search/#{sideBySide.rightLink}">#{sideBySide.right.text}</a>
+						</h2>
+					</td>
+				</tr>
+				<tr valign="top">
+					<td class="inside" width="50%" valign="top">
+						<ul style="list-style: none; padding-top: 5px;">
+						<ui:repeat var="t" value="#{sideBySide.leftTweetSample}">
+							<li class="tweet" style="margin-bottom: 5px">
+							<table><tr valign="middle">
+								<td valign="top" style="padding-right:7px;">
+									<a href="https://twitter.com/#!/#{t.screenName}" target="_blank"><image src="#{t.userProfileImageURL}" height="48px" width="48px"></image></a>
+								</td>
+								<td>
+									<a style="font-size: 15px;" href="https://twitter.com/#!/#{t.screenName}">#{t.screenName}</a>
+									<h:outputText value="#{t.userName}" style="padding-left: 5px; font-size: 12px; color: #ccc" /><br/>
+									#{t.text}<br/>
+									<a style="color: #ccc; font-size: 11px;" target="_blank" href="https://twitter.com/#!/#{t.screenName}/status/#{t.tweetId}">
+										<h:outputText value="#{t.received}" converter="com.ocpsoft.PrettyTimeConverter"/>
+									</a>
+								</td>
+							</tr></table>
+							</li>							
+						</ui:repeat>
+						</ul>
+					</td>
+					<td class="inside">
+						<ul style="list-style: none; padding-top: 5px;">
+						<ui:repeat var="t" value="#{sideBySide.rightTweetSample}">
+							<li class="tweet" style="margin-bottom: 5px">
+							<table><tr valign="middle">
+								<td valign="top" style="padding-right:7px;">
+									<a href="https://twitter.com/#!/#{t.screenName}" target="_blank"><image src="#{t.userProfileImageURL}" height="48px" width="48px"></image></a>
+								</td>
+								<td>
+									<a style="font-size: 15px;" href="https://twitter.com/#!/#{t.screenName}">#{t.screenName}</a> 
+									<h:outputText value="#{t.userName}" style="padding-left: 5px; font-size: 12px; color: #ccc" /><br/>
+									#{t.text}<br/>
+									<a style="color: #ccc; font-size: 11px;" target="_blank" href="https://twitter.com/#!/#{t.screenName}/status/#{t.tweetId}">
+										<h:outputText value="#{t.received}" converter="com.ocpsoft.PrettyTimeConverter"/>
+									</a>
+								</td>
+							</tr></table>
+							</li>							
+						</ui:repeat>
+						</ul>
+					</td>
+				</tr>
+			</table></div>
+			<p>
+				Results generated on <h:outputText value="#{sideBySide.now} " />
+				<h:link outcome="pretty:logout" value="clear" />
+			</p>
+			
+			<center>
+				<a href="http://twitter.com" target="_blank"><image src="http://a1.twimg.com/a/1306522453/images/logos/full_logo_blue.png" ></image></a>
+			</center>
+		</h:panelGroup>
+	</h:form>
+
+</center>
+	
+</h:body>
+</f:view>
+
+</html>

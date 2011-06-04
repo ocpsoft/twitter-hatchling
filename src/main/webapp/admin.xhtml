@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<h:head>
+	<title>OCPSoft Research: Admin</title>
+	
+</h:head>
+<h:body>
+	<h1>OCPSoft Research - Admin</h1>
+	
+	<h:link outcome="/index.xhtml" value="Home" />
+	
+	<table width = "100%">
+	
+	<tr valign="top">
+	<td width="50%">
+		<h:form>
+			<p>
+			Total tweets: <h:outputText value="#{twitterService.totalTweets}" />
+			</p>
+			
+			<h3>Stream Controls</h3>
+			<h:commandButton action="#{adminBean.startStream}" value="Start Streaming" disabled="#{twitterStreamHandler.streaming}" /> 
+			<h:commandButton action="#{adminBean.stopStream}" value="Stop Streaming" disabled="#{!twitterStreamHandler.streaming}" />
+			<p>
+			Streaming: <h:outputText value="#{twitterStreamHandler.streaming}" />
+			</p>
+			<p>
+			Twitter enabled: <h:outputText value="#{twitterStreamHandler.auth.enabled}"/>
+			</p>
+			
+			<h3>Filter Controls</h3>
+			<p>
+				<h:link outcome="pretty:listFilters" value="List Filter Tracks"/>, <h:link outcome="pretty:newFilter" value="Add Filter Track"/>
+			</p>
+			
+	
+			<h3>Update Stats</h3>		
+			<rich:calendar id="begin" value="#{adminBean.date}" showWeekDaysBar="false" showWeeksBar="false">
+			</rich:calendar> <h:commandButton value="Update" action="#{adminBean.updateStats}" />
+		</h:form>
+	</td>
+	<td width="50%">
+		<h3>Config</h3>
+		<h:form>
+			<h4>Default Selections</h4>
+			<h:selectOneMenu value="#{adminBean.config.defaultLeft}">
+				<f:selectItem itemDisabled="true" itemLabel="Choose Technology"/>
+				<f:selectItems value="#{adminBean.techWords}" var="k" itemLabel="#{k.text}"/>
+			</h:selectOneMenu>
+			<h:outputText value=" vs. " />
+			<h:selectOneMenu value="#{adminBean.config.defaultRight}">
+				<f:selectItem itemDisabled="true" itemLabel="Choose Technology"/>
+				<f:selectItems value="#{adminBean.techWords}" var="k" itemLabel="#{k.text}"/>
+			</h:selectOneMenu> 
+		    <h:commandButton action="#{adminBean.saveConfig}" value="Save Config"></h:commandButton>
+	    </h:form>
+		
+		<h4>Twitter API Keys</h4>
+		<h:form>
+			<label>Access Token<br/></label><h:inputText value="#{adminBean.config.accessToken}" size="64"/><br/>
+			<label>Access Token Secret<br/></label><h:inputText value="#{adminBean.config.accessTokenSecret}" size="64" /><br/>
+			<label>Consumer Key<br/></label><h:inputText value="#{adminBean.config.consumerKey}" size="64" /><br/>
+			<label>Consumer Secret<br/></label><h:inputText value="#{adminBean.config.consumerSecret}" size="64" /><br/>
+		    <h:commandButton action="#{adminBean.saveConfig}" value="Save Config"></h:commandButton>
+	    </h:form>
+	</td>
+	
+	</tr>
+	</table>
+		
+</h:body>
+
+</html>
