@@ -153,27 +153,35 @@
 			<div class="featured" style="padding:0px;">
 			<table width="100%" cellspacing="15px;">
 				<tr valign="top">
-					<td width="50%" style="max-width: 50%" class="inside">						
-						<h2 style="margin-bottom:15px;">
+					<td class="inside" width="33%">		
+						<h1 style="margin-bottom:15px; margin-left: 6px">
 							<a style="font-size: 25px; color: #4A91C3; text-decoration: none" 
 								href="https://twitter.com/#!/search/#{sideBySide.leftLink}">#{sideBySide.left.text}</a>
-						</h2>
+						</h1>
 					</td>
-					<td width="50%" style="max-width: 50%" class="inside">						
-						<h2 style="margin-bottom:15px;">
+					<td class="inside">
+						<b>Total Tweets:</b><br/> #{sideBySide.leftTotal}<br/>
+						<b>Avg. per Day:</b><br/> #{sideBySide.leftAverage}
+					</td>
+					<td class="inside" width="33%">
+						<h1 style="margin-bottom:15px; margin-left: 6px;">
 							<a style="font-size: 25px; color: #F70; text-decoration: none" 
 								href="https://twitter.com/#!/search/#{sideBySide.rightLink}">#{sideBySide.right.text}</a>
-						</h2>
+						</h1>
+					</td>
+					<td class="inside">
+						<b>Total Tweets:</b><br/> #{sideBySide.rightTotal}<br/>
+						<b>Avg. per Day:</b><br/> #{sideBySide.rightAverage}
 					</td>
 				</tr>
 				<tr valign="top">
-					<td class="inside" width="50%" valign="top">
+					<td colspan="2" class="inside" width="50%">
 						<ul style="list-style: none; padding-top: 5px;">
 						<ui:repeat var="t" value="#{sideBySide.leftTweetSample}">
 							<li class="tweet" style="margin-bottom: 5px">
 							<table><tr valign="middle">
 								<td valign="top" style="padding-right:7px;">
-									<a href="https://twitter.com/#!/#{t.screenName}" target="_blank"><image src="#{t.userProfileImageURL}" height="48px" width="48px"></image></a>
+									<a href="https://twitter.com/#!/#{t.screenName}" target="_blank"><img src="#{t.userProfileImageURL}" height="48px" width="48px"></img></a>
 								</td>
 								<td>
 									<a style="font-size: 15px;" href="https://twitter.com/#!/#{t.screenName}">#{t.screenName}</a>
@@ -188,13 +196,13 @@
 						</ui:repeat>
 						</ul>
 					</td>
-					<td class="inside">
+					<td colspan="2"  class="inside">
 						<ul style="list-style: none; padding-top: 5px;">
 						<ui:repeat var="t" value="#{sideBySide.rightTweetSample}">
 							<li class="tweet" style="margin-bottom: 5px">
 							<table><tr valign="middle">
 								<td valign="top" style="padding-right:7px;">
-									<a href="https://twitter.com/#!/#{t.screenName}" target="_blank"><image src="#{t.userProfileImageURL}" height="48px" width="48px"></image></a>
+									<a href="https://twitter.com/#!/#{t.screenName}" target="_blank"><img src="#{t.userProfileImageURL}" height="48px" width="48px"></img></a>
 								</td>
 								<td>
 									<a style="font-size: 15px;" href="https://twitter.com/#!/#{t.screenName}">#{t.screenName}</a> 
@@ -217,7 +225,7 @@
 			</p>
 			
 			<center>
-				<a href="http://twitter.com" target="_blank"><image src="http://a1.twimg.com/a/1306522453/images/logos/full_logo_blue.png" ></image></a>
+				<a href="http://twitter.com" target="_blank"><img src="http://a1.twimg.com/a/1306522453/images/logos/full_logo_blue.png" ></img></a>
 			</center>
 		</h:panelGroup>
 	</h:form>

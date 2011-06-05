@@ -62,9 +62,12 @@ public class SideBySide implements Serializable
    @Inject
    private SettingsService settings;
 
+   private List<Date> range;
    private Date lastBegin;
    private Date lastEnd;
 
+   private String leftParam;
+   private String rightParam;
    private List<Keyword> techWords = new ArrayList<Keyword>();
    private Keyword left;
    private Keyword right;
@@ -79,10 +82,12 @@ public class SideBySide implements Serializable
    private List<Tweet> rightTweets = new ArrayList<Tweet>();
 
    private Map<Date, Long> leftTweetMap = new HashMap<Date, Long>();
-
    private Map<Date, Long> rightTweetMap = new HashMap<Date, Long>();
 
-   private List<Date> range;
+   private long leftTotal = 0;
+   private long rightTotal = 0;
+   private double leftAverage = 0;
+   private double rightAverage = 0;
 
    public void leftValueChanged(final ValueChangeEvent event) throws AbortProcessingException
    {
@@ -107,6 +112,29 @@ public class SideBySide implements Serializable
       {
          if (left == null || right == null)
          {
+
+            if (leftParam != null)
+            {
+               for (Keyword k : techWords)
+               {
+                  if (k.getText().equalsIgnoreCase(leftParam))
+                  {
+                     left = k;
+                     break;
+                  }
+               }
+            }
+            if (rightParam != null)
+            {
+               for (Keyword k : techWords)
+               {
+                  if (k.getText().equalsIgnoreCase(rightParam))
+                  {
+                     right = k;
+                     break;
+                  }
+               }
+            }
             HatchlingConfig config = settings.getConfig();
             if (left == null)
             {
@@ -244,6 +272,15 @@ public class SideBySide implements Serializable
 
             leftTweets = twitterService.getSampleTweets(Arrays.asList(left), begin, end, 0, 10);
             countTweets(left, leftTweetMap, stats);
+
+            leftTotal = 0;
+            leftAverage = 0;
+            for (Long tweets : leftTweetMap.values())
+            {
+               leftTotal += tweets;
+               leftAverage += tweets;
+            }
+            leftAverage = Math.round(leftAverage / leftTweetMap.values().size() * 100 / 100);
          }
 
          if (updateRight)
@@ -256,6 +293,15 @@ public class SideBySide implements Serializable
 
             rightTweets = twitterService.getSampleTweets(Arrays.asList(right), begin, end, 0, 10);
             countTweets(right, rightTweetMap, stats);
+
+            rightTotal = 0;
+            rightAverage = 0;
+            for (Long tweets : rightTweetMap.values())
+            {
+               rightTotal += tweets;
+               rightAverage += tweets;
+            }
+            rightAverage = Math.round(rightAverage / rightTweetMap.values().size() * 100) / 100;
          }
       }
 
@@ -362,6 +408,66 @@ public class SideBySide implements Serializable
    public int getSampleSize()
    {
       return sampleSize;
+   }
+
+   public String getLeftParam()
+   {
+      return leftParam;
+   }
+
+   public void setLeftParam(String leftParam)
+   {
+      this.leftParam = leftParam;
+   }
+
+   public String getRightParam()
+   {
+      return rightParam;
+   }
+
+   public void setRightParam(String rightParam)
+   {
+      this.rightParam = rightParam;
+   }
+
+   public long getLeftTotal()
+   {
+      return leftTotal;
+   }
+
+   public void setLeftTotal(long leftTotal)
+   {
+      this.leftTotal = leftTotal;
+   }
+
+   public long getRightTotal()
+   {
+      return rightTotal;
+   }
+
+   public void setRightTotal(long rightTotal)
+   {
+      this.rightTotal = rightTotal;
+   }
+
+   public double getLeftAverage()
+   {
+      return leftAverage;
+   }
+
+   public void setLeftAverage(double leftAverage)
+   {
+      this.leftAverage = leftAverage;
+   }
+
+   public double getRightAverage()
+   {
+      return rightAverage;
+   }
+
+   public void setRightAverage(double rightAverage)
+   {
+      this.rightAverage = rightAverage;
    }
 
 }

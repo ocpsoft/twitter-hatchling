@@ -4,6 +4,8 @@
 	xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.2.1 http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.2.1.xsd">
 	<url-mapping id="home">
 		<pattern value="/" />
+		<query-param onPostback="false" name="left">#{sideBySide.leftParam}</query-param>
+		<query-param onPostback="false" name="right">#{sideBySide.rightParam}</query-param>
 		<view-id value="/faces/index.xhtml" />
 		<action>#{sideBySide.init}</action>
 	</url-mapping>
