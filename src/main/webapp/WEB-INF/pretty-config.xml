@@ -10,7 +10,7 @@
 		<action>#{sideBySide.init}</action>
 	</url-mapping>
 	<url-mapping id="admin">
-		<pattern value="/admin" />
+		<pattern value="/nimda" />
 		<view-id value="/faces/admin.xhtml" />
 		<action>#{adminBean.init}</action>
 	</url-mapping>
