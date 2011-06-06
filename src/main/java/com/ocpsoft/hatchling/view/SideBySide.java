@@ -22,6 +22,8 @@
 package com.ocpsoft.hatchling.view;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,10 +93,12 @@ public class SideBySide implements Serializable
 
    public void leftValueChanged(final ValueChangeEvent event) throws AbortProcessingException
    {
+      System.out.println("Left: " + event.getOldValue() + " -> " + event.getNewValue());
    }
 
    public void rightValueChanged(final ValueChangeEvent event) throws AbortProcessingException
    {
+      System.out.println("Right: " + event.getOldValue() + " -> " + event.getNewValue());
    }
 
    /*
@@ -110,36 +114,37 @@ public class SideBySide implements Serializable
 
       if (!techWords.isEmpty())
       {
-         if (left == null || right == null)
-         {
 
-            if (leftParam != null)
+         if (leftParam != null)
+         {
+            for (Keyword k : techWords)
             {
-               for (Keyword k : techWords)
+               if (k.getText().equalsIgnoreCase(leftParam))
                {
-                  if (k.getText().equalsIgnoreCase(leftParam))
-                  {
-                     left = k;
-                     break;
-                  }
+                  left = k;
+                  break;
                }
             }
-            if (rightParam != null)
+         }
+         if (rightParam != null)
+         {
+            for (Keyword k : techWords)
             {
-               for (Keyword k : techWords)
+               if (k.getText().equalsIgnoreCase(rightParam))
                {
-                  if (k.getText().equalsIgnoreCase(rightParam))
-                  {
-                     right = k;
-                     break;
-                  }
+                  right = k;
+                  break;
                }
             }
+         }
+
+         if ((left == null) || (right == null))
+         {
             HatchlingConfig config = settings.getConfig();
             if (left == null)
             {
                Keyword defaultLeft = config.getDefaultLeft();
-               if (defaultLeft != null && techWords.contains(defaultLeft))
+               if ((defaultLeft != null) && techWords.contains(defaultLeft))
                {
                   left = defaultLeft;
                }
@@ -151,7 +156,7 @@ public class SideBySide implements Serializable
             if (right == null)
             {
                Keyword defaultRight = config.getDefaultRight();
-               if (defaultRight != null && techWords.contains(defaultRight))
+               if ((defaultRight != null) && techWords.contains(defaultRight))
                {
                   right = defaultRight;
                }
@@ -202,14 +207,14 @@ public class SideBySide implements Serializable
       return right;
    }
 
-   public String getLeftLink()
+   public String getLeftLink() throws UnsupportedEncodingException
    {
-      return left == null ? "" : left.getText().replaceAll("#", "%23");
+      return left == null ? "" : URLEncoder.encode(left.getLabel().replaceAll("#", "%23"), "UTF-8");
    }
 
-   public String getRightLink()
+   public String getRightLink() throws UnsupportedEncodingException
    {
-      return right == null ? "" : right.getText().replaceAll("#", "%23");
+      return right == null ? "" : URLEncoder.encode(right.getLabel().replaceAll("#", "%23"), "UTF-8");
    }
 
    public void setRight(final Keyword right)
@@ -333,8 +338,8 @@ public class SideBySide implements Serializable
       }
 
       data.put("rows", rows);
-      data.put("left", left.getText());
-      data.put("right", right.getText());
+      data.put("left", left.getLabel());
+      data.put("right", right.getLabel());
       data.put("showTextEvery", increment);
       return data;
    }
@@ -415,7 +420,7 @@ public class SideBySide implements Serializable
       return leftParam;
    }
 
-   public void setLeftParam(String leftParam)
+   public void setLeftParam(final String leftParam)
    {
       this.leftParam = leftParam;
    }
@@ -425,7 +430,7 @@ public class SideBySide implements Serializable
       return rightParam;
    }
 
-   public void setRightParam(String rightParam)
+   public void setRightParam(final String rightParam)
    {
       this.rightParam = rightParam;
    }
@@ -435,7 +440,7 @@ public class SideBySide implements Serializable
       return leftTotal;
    }
 
-   public void setLeftTotal(long leftTotal)
+   public void setLeftTotal(final long leftTotal)
    {
       this.leftTotal = leftTotal;
    }
@@ -445,7 +450,7 @@ public class SideBySide implements Serializable
       return rightTotal;
    }
 
-   public void setRightTotal(long rightTotal)
+   public void setRightTotal(final long rightTotal)
    {
       this.rightTotal = rightTotal;
    }
@@ -455,7 +460,7 @@ public class SideBySide implements Serializable
       return leftAverage;
    }
 
-   public void setLeftAverage(double leftAverage)
+   public void setLeftAverage(final double leftAverage)
    {
       this.leftAverage = leftAverage;
    }
@@ -465,7 +470,7 @@ public class SideBySide implements Serializable
       return rightAverage;
    }
 
-   public void setRightAverage(double rightAverage)
+   public void setRightAverage(final double rightAverage)
    {
       this.rightAverage = rightAverage;
    }

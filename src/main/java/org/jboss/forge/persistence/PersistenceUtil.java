@@ -16,13 +16,12 @@ public abstract class PersistenceUtil implements Serializable
 
    protected <T> void create(final T entity)
    {
-      // getEntityManager().joinTransaction();
       getEntityManager().persist(entity);
    }
 
    protected <T> void delete(final T entity) throws NoResultException
    {
-      // getEntityManager().joinTransaction();
+      getEntityManager().joinTransaction();
       getEntityManager().remove(entity);
    }
 

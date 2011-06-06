@@ -17,6 +17,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Index;
+
 @Entity
 @Table(name = "tweets")
 public class Tweet implements Serializable
@@ -48,6 +50,7 @@ public class Tweet implements Serializable
    @Column
    private String profileURL;
 
+   @Index(name = "tweetReceivedIndex")
    @Temporal(TemporalType.TIMESTAMP)
    private Date received;
 
@@ -56,6 +59,15 @@ public class Tweet implements Serializable
 
    @ManyToMany(cascade = CascadeType.ALL)
    private Set<TweetURL> tweetURLs = new HashSet<TweetURL>();
+
+   public Tweet()
+   {
+   }
+
+   public Tweet(final String text)
+   {
+      this.text = text;
+   }
 
    public Long getId()
    {

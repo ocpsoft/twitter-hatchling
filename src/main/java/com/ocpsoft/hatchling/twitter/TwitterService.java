@@ -34,6 +34,9 @@ public class TwitterService extends PersistenceUtil
    @Inject
    private EntityManager manager;
 
+   @Inject
+   private KeywordParser keywordParser;
+
    private static final long serialVersionUID = -939943862688471632L;
 
    public long getTotalTweets()
@@ -52,7 +55,7 @@ public class TwitterService extends PersistenceUtil
       List<String> list = new ArrayList<String>();
       for (Keyword keyword : keywords)
       {
-         list.add(keyword.getText());
+         list.add(keyword.getLabel());
       }
 
       List<Tweet> result = new ArrayList<Tweet>();
@@ -64,7 +67,7 @@ public class TwitterService extends PersistenceUtil
                         " JOIN t.keywords k " +
                         " WHERE t.received > :start " +
                         " AND t.received < :end " +
-                        " AND k.text in (:keywords)) " +
+                        " AND k.label in (:keywords)) " +
                         " ORDER BY t.received DESC", Tweet.class);
 
       query.setParameter("start", DateUtils.truncate(start, Calendar.DATE));
@@ -86,26 +89,14 @@ public class TwitterService extends PersistenceUtil
       return result;
    }
 
-   public void saveNewTweets(final List<Tweet> buffer)
+   public void saveNewTweets(List<Tweet> buffer)
    {
       manager.joinTransaction();
       /*
        * Insert new tweets, urls, and keywords
        */
       List<Keyword> trackKeywords = getTrackKeywords();
-
-      Set<Keyword> tweetedKeywords = new HashSet<Keyword>();
-      for (Tweet tweet : buffer)
-      {
-         for (Keyword track : trackKeywords)
-         {
-            if (tweet.getText().toLowerCase().contains(track.getText().toLowerCase()))
-            {
-               tweet.getKeywords().add(track);
-               tweetedKeywords.add(track);
-            }
-         }
-      }
+      buffer = keywordParser.assignKeywords(trackKeywords, buffer);
 
       Set<String> tweetedURLs = new HashSet<String>();
       for (Tweet tweet : buffer)
@@ -155,6 +146,9 @@ public class TwitterService extends PersistenceUtil
 
    public void updateStats(Date date)
    {
+      // select count(u.id) AS c, u.url, u.id FROM urls AS u INNER JOIN tweets_urls AS t ON u.id = t.tweetURLs_id GROUP
+      // BY u.id HAVING c > 20 ORDER BY c DESC LIMIT 200;
+
       date = DateUtils.truncate(date, Calendar.DATE);
       Date next = DateUtils.addDays(date, 1);
 
@@ -256,12 +250,12 @@ public class TwitterService extends PersistenceUtil
       TypedQuery<DayStatsKeyword> query = manager.createQuery("FROM DayStatsKeyword d " +
                " WHERE d.day.date >= :begin " +
                " AND d.day.date <= :end " +
-               " AND d.keyword.text = :keyword " +
+               " AND d.keyword.label = :keyword " +
                " ORDER BY d.day.date ASC", DayStatsKeyword.class);
 
       query.setParameter("begin", begin);
       query.setParameter("end", end);
-      query.setParameter("keyword", keyword.getText());
+      query.setParameter("keyword", keyword.getLabel());
 
       List<DayStatsKeyword> result = query.getResultList();
       return result;

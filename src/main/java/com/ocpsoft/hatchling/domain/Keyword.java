@@ -12,7 +12,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
+import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Index;
 import org.metawidget.inspector.annotation.UiHidden;
 
 @Entity
@@ -28,12 +30,27 @@ public class Keyword implements Serializable, Comparable<Keyword>
    @Column(name = "version")
    private int version = 0;
 
+   @Index(name = "labelIndex")
    @Column(unique = true, nullable = false)
+   private String label;
+
+   @Size(max = 60)
+   @Column(unique = true, nullable = false, length = 60)
    private String text;
 
    @UiHidden
    @Temporal(TemporalType.TIMESTAMP)
    private Date createdOn;
+
+   public Keyword()
+   {
+   }
+
+   public Keyword(final String label, final String text)
+   {
+      this.label = label;
+      this.text = text;
+   }
 
    public Long getId()
    {
@@ -70,7 +87,7 @@ public class Keyword implements Serializable, Comparable<Keyword>
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((text == null) ? 0 : text.hashCode());
+      result = prime * result + ((label == null) ? 0 : label.hashCode());
       return result;
    }
 
@@ -84,12 +101,12 @@ public class Keyword implements Serializable, Comparable<Keyword>
       if (getClass() != obj.getClass())
          return false;
       Keyword other = (Keyword) obj;
-      if (text == null)
+      if (label == null)
       {
-         if (other.text != null)
+         if (other.label != null)
             return false;
       }
-      else if (!text.equals(other.text))
+      else if (!label.equals(other.label))
          return false;
       return true;
    }
@@ -107,11 +124,11 @@ public class Keyword implements Serializable, Comparable<Keyword>
    @Override
    public String toString()
    {
-      return "Keyword [id=" + id + ", text=" + text + "]";
+      return label;
    }
 
    @Override
-   public int compareTo(Keyword other)
+   public int compareTo(final Keyword other)
    {
       if (this == other)
       {
@@ -122,16 +139,26 @@ public class Keyword implements Serializable, Comparable<Keyword>
          return 1;
       }
 
-      if (this.text == null && (other.getText() == null))
+      if ((this.text == null) && (other.getLabel() == null))
       {
          return 1;
       }
-      else if (other.getText() == null)
+      else if (other.getLabel() == null)
       {
          return 1;
       }
 
-      return text.toLowerCase().compareTo(other.getText().toLowerCase());
+      return text.toLowerCase().compareTo(other.getLabel().toLowerCase());
 
+   }
+
+   public String getLabel()
+   {
+      return label;
+   }
+
+   public void setLabel(final String label)
+   {
+      this.label = label;
    }
 }

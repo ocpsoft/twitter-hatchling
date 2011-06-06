@@ -51,12 +51,12 @@
 			<h4>Default Selections</h4>
 			<h:selectOneMenu value="#{adminBean.config.defaultLeft}">
 				<f:selectItem itemDisabled="true" itemLabel="Choose Technology"/>
-				<f:selectItems value="#{adminBean.techWords}" var="k" itemLabel="#{k.text}"/>
+				<f:selectItems value="#{adminBean.techWords}" var="k" itemLabel="#{k.label}"/>
 			</h:selectOneMenu>
 			<h:outputText value=" vs. " />
 			<h:selectOneMenu value="#{adminBean.config.defaultRight}">
 				<f:selectItem itemDisabled="true" itemLabel="Choose Technology"/>
-				<f:selectItems value="#{adminBean.techWords}" var="k" itemLabel="#{k.text}"/>
+				<f:selectItems value="#{adminBean.techWords}" var="k" itemLabel="#{k.label}"/>
 			</h:selectOneMenu> 
 		    <h:commandButton action="#{adminBean.saveConfig}" value="Save Config"></h:commandButton>
 	    </h:form>

@@ -14,6 +14,7 @@
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<h:outputStylesheet name="research.css" />
 	<h:outputScript name="autolink.js" />
+	<h:outputScript name="hatchling.js" />
 	
 	<style type="text/css">
 		.disabled {
@@ -41,110 +42,39 @@
 </h:head>
 
 <h:body>
-
-
-	
-	<script type="text/javascript">
-		if (!window["busystatus"]) {
-			var busystatus = {};
-		}
-		 
-		busystatus.onStatusChange = function onStatusChange(data) {
-			var status = data.status;
-		 
-			if (status === "begin") { // turn on busy indicator
-				document.body.style.cursor = 'wait';
-			} else { // turn off busy indicator, on either "complete" or "success"
-				document.body.style.cursor = 'auto';
-			}
-		};
-		 
-		jsf.ajax.addOnEvent(busystatus.onStatusChange);
-	</script>
-
 <center>
 
     <div id="line_chart"></div>
     
+	<script type="text/javascript">
+		hatchling.init();
+	</script>
+    
 	<h:form>
-		<a4j:jsFunction name="getData" data="#{sideBySide.chartData}" oncomplete="drawChart(event)" />
-	
-		<script type="text/javascript">
-			// Load the Visualization API and the piechart package.
-			google.load('visualization', '1', {'packages':['corechart']});
-	
-			// Set a callback to run when the Google Visualization API is loaded.
-			google.setOnLoadCallback(init);
-
-			if (!window["chart"]) {
-				var chart = {};
-			}
-			
-			function init()
-			{
-				chart = new google.visualization.LineChart(document.getElementById('line_chart'));
-				getData();
-			}
-	
-			function drawChart(event) {
-				// Everything is loaded. Lets draw our chart...
-
-				var data = new google.visualization.DataTable();
-				data.addColumn('string', 'Date');
-				data.addColumn('number', event.data.left);
-				data.addColumn('number', event.data.right);
-
-				data.addRows(event.data.rows);
-				
-				chart.draw(data, {
-					curveType: 'none',
-					legend: 'top',
-	                vAxis: {
-		                minValue: 0,
-		                baseline: 0
-	                }, 
-	                hAxis: {
-		                showTextEvery: event.data.showTextEvery,
-		                textStyle: {
-			                color: 'grey',
-			                fontSize: 8
-		                },
-	                	textPosition: 'in'
-	                },
-					pointSize: 3,
-					colors: ["#4A91C3", "#F70"],
-					width: 800, 
-					height: 240, 
-					is3D: true, 
-					title: null
-				});  
-	
-			}
-		</script>
+		<a4j:jsFunction name="getData" data="#{sideBySide.chartData}" oncomplete="hatchling.drawChart(event)" />
 	
 		<h2 style="padding-bottom: 6px;">Fight!
 		<h:selectOneMenu value="#{sideBySide.left}" valueChangeListener="#{sideBySide.leftValueChanged}">
 			<f:selectItem itemDisabled="true" itemLabel="Choose Technology"/>
-			<f:selectItems value="#{sideBySide.techWords}" var="k" itemLabel="#{k.text}"/>
-			<a4j:ajax execute="@form" oncomplete="getData()" render="tweets" />
+			<f:selectItems value="#{sideBySide.techWords}" var="k" itemLabel="#{k.label}"/>
+			<a4j:ajax execute="@form" oncomplete="getData()" render="tweets meta" />
 		</h:selectOneMenu>
 		<h:outputText value=" vs. " />
 		<h:selectOneMenu value="#{sideBySide.right}" valueChangeListener="#{sideBySide.rightValueChanged}">
 			<f:selectItem itemDisabled="true" itemLabel="Choose Technology"/>
-			<f:selectItems value="#{sideBySide.techWords}" var="k" itemLabel="#{k.text}"/>
-			<a4j:ajax execute="@form" oncomplete="getData()" render="tweets" />
+			<f:selectItems value="#{sideBySide.techWords}" var="k" itemLabel="#{k.label}"/>
+			<a4j:ajax execute="@form" oncomplete="getData()" render="tweets meta" />
 		</h:selectOneMenu> 
-		
 		
 		<h:outputText value=" : " />
 		<rich:calendar id="begin" value="#{sideBySide.begin}" dataModel="#{sideBySideCalendar.begin}" 
 			showWeekDaysBar="false" showWeeksBar="false">
-			<a4j:ajax execute="@form" oncomplete="getData()" render="end tweets" />
+			<a4j:ajax execute="@form" oncomplete="getData()" render="end tweets meta" />
 		</rich:calendar>
 		<h:outputText value="->" />
 		<rich:calendar id="end" value="#{sideBySide.end}" dataModel="#{sideBySideCalendar.end}" 
 			showWeekDaysBar="false" showWeeksBar="false">
-			<a4j:ajax execute="@form" oncomplete="getData()" render="begin tweets" />
+			<a4j:ajax execute="@form" oncomplete="getData()" render="begin tweets meta" />
 		</rich:calendar>
 		</h2>
 		
@@ -156,7 +86,7 @@
 					<td class="inside" width="33%">		
 						<h1 style="margin-bottom:15px; margin-left: 6px">
 							<a style="font-size: 25px; color: #4A91C3; text-decoration: none" 
-								href="https://twitter.com/#!/search/#{sideBySide.leftLink}">#{sideBySide.left.text}</a>
+								href="https://twitter.com/#!/search/#{sideBySide.leftLink}">#{sideBySide.left.label}</a>
 						</h1>
 					</td>
 					<td class="inside">
@@ -166,7 +96,7 @@
 					<td class="inside" width="33%">
 						<h1 style="margin-bottom:15px; margin-left: 6px;">
 							<a style="font-size: 25px; color: #F70; text-decoration: none" 
-								href="https://twitter.com/#!/search/#{sideBySide.rightLink}">#{sideBySide.right.text}</a>
+								href="https://twitter.com/#!/search/#{sideBySide.rightLink}">#{sideBySide.right.label}</a>
 						</h1>
 					</td>
 					<td class="inside">
@@ -219,15 +149,24 @@
 					</td>
 				</tr>
 			</table></div>
-			<p>
-				Results generated on <h:outputText value="#{sideBySide.now} " />
-				<h:link outcome="pretty:logout" value="clear" />
-			</p>
-			
-			<center>
-				<a href="http://twitter.com" target="_blank"><img src="http://a1.twimg.com/a/1306522453/images/logos/full_logo_blue.png" ></img></a>
-			</center>
 		</h:panelGroup>
+		
+		<p>
+		<h:panelGroup id="meta">
+			<span id="permalink"></span>
+			<script type="text/javascript">
+				//<![CDATA[
+				document.getElementById('permalink').innerHTML = (
+						"<a href='" + [location.protocol, '//', location.host, location.pathname].join('') + "?left=#{sideBySide.leftLink}&right=#{sideBySide.rightLink}'>#</a>"
+				);
+				//]]>
+			</script>
+			Results generated on <h:outputText value="#{sideBySide.now} " />
+			<h:link outcome="pretty:logout" value="clear" />
+		</h:panelGroup>
+		</p>
+		<a href="http://twitter.com" target="_blank"><img src="http://a1.twimg.com/a/1306522453/images/logos/full_logo_blue.png" ></img></a>
+
 	</h:form>
 
 </center>

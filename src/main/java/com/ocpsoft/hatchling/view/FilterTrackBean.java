@@ -35,6 +35,7 @@ public class FilterTrackBean extends PersistenceUtil
 
    public String create()
    {
+      filtertrack.setText(filtertrack.getText().replaceAll("\\s*,\\s*", ","));
       filtertrack.setCreatedOn(new Date());
       create(filtertrack);
       return "view?faces-redirect=true&id=" + filtertrack.getId();
@@ -48,6 +49,7 @@ public class FilterTrackBean extends PersistenceUtil
 
    public String save()
    {
+      filtertrack.setText(filtertrack.getText().replaceAll("\\s*,\\s*", ","));
       save(filtertrack);
       return "view?faces-redirect=true&id=" + filtertrack.getId();
    }

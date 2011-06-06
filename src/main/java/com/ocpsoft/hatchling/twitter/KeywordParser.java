@@ -19,33 +19,42 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package com.ocpsoft.hatchling.view;
+package com.ocpsoft.hatchling.twitter;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.ocpsoft.hatchling.domain.Keyword;
+import com.ocpsoft.hatchling.domain.Tweet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@FacesConverter(forClass = Keyword.class)
-public class KeywordConverter implements Converter
+public class KeywordParser
 {
-   @Override
-   public Object getAsObject(final FacesContext context, final UIComponent comp, final String value)
+   public List<Tweet> assignKeywords(final List<Keyword> trackKeywords, final List<Tweet> buffer)
    {
-      Keyword keyword = new Keyword();
-      keyword.setLabel(value);
-      return keyword;
+      List<Tweet> result = new ArrayList<Tweet>();
+
+      for (Tweet tweet : buffer)
+      {
+         for (Keyword track : trackKeywords)
+         {
+            List<String> list = Arrays.asList(track.getText().split("\\s*,\\s*"));
+            for (String word : list)
+            {
+               if (tweet.getText().toLowerCase().contains(word.toLowerCase()))
+               {
+                  tweet.getKeywords().add(track);
+                  result.add(tweet);
+                  break;
+               }
+            }
+         }
+      }
+      return result;
    }
 
-   @Override
-   public String getAsString(final FacesContext context, final UIComponent comp, final Object object)
-   {
-      return ((Keyword) object).getLabel();
-   }
 }
