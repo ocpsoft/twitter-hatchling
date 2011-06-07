@@ -10,7 +10,7 @@ if(!window["hatchling"]) {
 hatchling.setupChart = function setupChart()
 {
 	chart = new google.visualization.LineChart(document.getElementById('line_chart'));
-	getData();
+	var t = setTimeout("getData();", 500);
 };
 
 hatchling.init = function init() {
@@ -67,6 +67,7 @@ hatchling.drawChart = function drawChart(event) {
         	textPosition: 'in'
         },
 		pointSize: 3,
+		lineWidth: 3,
 		colors: ["#4A91C3", "#F70"],
 		width: 800, 
 		height: 240, 

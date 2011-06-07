@@ -9,46 +9,19 @@
 <f:view contentType="text/html">
 
 <h:head>
-	<title>OCPSoft Research: Side-by-side | Technology | Twitter | Comparison"</title>
+	<title>OCPSoft Hatchling: Research - Side-by-side | Technology | Twitter | Comparison | FIGHT!"</title>
 	
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<h:outputStylesheet name="research.css" />
 	<h:outputScript name="autolink.js" />
 	<h:outputScript name="hatchling.js" />
-	
-	<style type="text/css">
-		.disabled {
-			color: gray;
-		}
-		.rf-cal-today {
-		    background-color: #FFF;
-		    color: #000;
-		    font-weight: inherit;
-		}
-		.bold {
-		    font-weight: bold;
-		}
-		.tweet {
-			font-size: 15px;
-		}
-		.tweet > a {
-			font-size: 15px;
-		}
-		li.tweet {
-			padding-bottom: 5px;
-			border-bottom: 1px #ddd solid;
-		}
-	</style>
 </h:head>
 
 <h:body>
+    
 <center>
 
     <div id="line_chart"></div>
-    
-	<script type="text/javascript">
-		hatchling.init();
-	</script>
     
 	<h:form>
 		<a4j:jsFunction name="getData" data="#{sideBySide.chartData}" oncomplete="hatchling.drawChart(event)" />
@@ -157,7 +130,7 @@
 			<script type="text/javascript">
 				//<![CDATA[
 				document.getElementById('permalink').innerHTML = (
-						"<a href='http://ocpsoft.com/research/?left=#{sideBySide.leftLink}&right=#{sideBySide.rightLink}'>#</a>"
+						"<a target='_parent' href='http://ocpsoft.com/research/?left=#{sideBySide.leftLink}&right=#{sideBySide.rightLink}'>#</a>"
 				);
 				//]]>
 			</script>
@@ -170,6 +143,10 @@
 	</h:form>
 
 </center>
+    
+<script type="text/javascript">
+	hatchling.init();
+</script>
 	
 </h:body>
 </f:view>

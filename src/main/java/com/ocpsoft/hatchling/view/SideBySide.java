@@ -112,31 +112,33 @@ public class SideBySide implements Serializable
          Collections.sort(techWords);
       }
 
+      if (leftParam != null)
+      {
+         for (Keyword k : techWords)
+         {
+            if (k.getLabel().equalsIgnoreCase(leftParam))
+            {
+               lastLeft = left;
+               setLeft(k);
+               break;
+            }
+         }
+      }
+      if (rightParam != null)
+      {
+         for (Keyword k : techWords)
+         {
+            if (k.getLabel().equalsIgnoreCase(rightParam))
+            {
+               lastRight = right;
+               setRight(k);
+               break;
+            }
+         }
+      }
+
       if (!techWords.isEmpty())
       {
-
-         if (leftParam != null)
-         {
-            for (Keyword k : techWords)
-            {
-               if (k.getText().equalsIgnoreCase(leftParam))
-               {
-                  left = k;
-                  break;
-               }
-            }
-         }
-         if (rightParam != null)
-         {
-            for (Keyword k : techWords)
-            {
-               if (k.getText().equalsIgnoreCase(rightParam))
-               {
-                  right = k;
-                  break;
-               }
-            }
-         }
 
          if ((left == null) || (right == null))
          {
