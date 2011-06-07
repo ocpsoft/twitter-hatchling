@@ -10,7 +10,7 @@ if(!window["hatchling"]) {
 hatchling.setupChart = function setupChart()
 {
 	chart = new google.visualization.LineChart(document.getElementById('line_chart'));
-	var t = setTimeout("getData();", 500);
+	var t = setTimeout("getData();", 600);
 };
 
 hatchling.init = function init() {

@@ -118,8 +118,11 @@ public class SideBySide implements Serializable
          {
             if (k.getLabel().equalsIgnoreCase(leftParam))
             {
-               lastLeft = left;
-               setLeft(k);
+               if (!k.equals(left))
+               {
+                  lastLeft = left;
+                  setLeft(k);
+               }
                break;
             }
          }
@@ -130,8 +133,11 @@ public class SideBySide implements Serializable
          {
             if (k.getLabel().equalsIgnoreCase(rightParam))
             {
-               lastRight = right;
-               setRight(k);
+               if (!k.equals(right))
+               {
+                  lastRight = right;
+                  setRight(k);
+               }
                break;
             }
          }
