@@ -6,8 +6,10 @@
 		<pattern value="/" />
 		<query-param onPostback="false" name="left">#{sideBySide.leftParam}</query-param>
 		<query-param onPostback="false" name="right">#{sideBySide.rightParam}</query-param>
+		<query-param onPostback="false" name="end">#{sideBySide.endParam}</query-param>
+		<query-param onPostback="false" name="begin">#{sideBySide.beginParam}</query-param>
 		<view-id value="/faces/index.xhtml" />
-		<action onPostback="false">#{sideBySide.init}</action>
+		<action>#{sideBySide.init}</action>
 	</url-mapping>
 	<url-mapping id="admin">
 		<pattern value="/nimda" />

@@ -24,6 +24,7 @@ package com.ocpsoft.hatchling.view;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,6 +58,7 @@ import com.ocpsoft.hatchling.util.DateUtils;
 public class SideBySide implements Serializable
 {
    private static final long serialVersionUID = 6180121970302855698L;
+   private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
    @Inject
    private TwitterService twitterService;
@@ -64,20 +66,14 @@ public class SideBySide implements Serializable
    @Inject
    private SettingsService settings;
 
-   private List<Date> range;
-   private Date lastBegin;
-   private Date lastEnd;
+   private String leftParam = "";
+   private String rightParam = "";
 
-   private String leftParam;
-   private String rightParam;
    private List<Keyword> techWords = new ArrayList<Keyword>();
-   private Keyword left;
-   private Keyword right;
-   private Keyword lastLeft;
-   private Keyword lastRight;
-
-   private Date begin;
-   private Date end;
+   private Keyword left = new Keyword();
+   private Keyword right = new Keyword();
+   private Keyword lastLeft = new Keyword();
+   private Keyword lastRight = new Keyword();
 
    private final int sampleSize = 5;
    private List<Tweet> leftTweets = new ArrayList<Tweet>();
@@ -90,6 +86,12 @@ public class SideBySide implements Serializable
    private long rightTotal = 0;
    private double leftAverage = 0;
    private double rightAverage = 0;
+
+   private Date end = DateUtils.truncate(new Date(), Calendar.DATE);;
+   private Date begin = DateUtils.addDays(end, -7);
+   private Date lastEnd = new Date(0);
+   private Date lastBegin = new Date(0);
+   private List<Date> range = getDateRange();
 
    public void leftValueChanged(final ValueChangeEvent event) throws AbortProcessingException
    {
@@ -106,6 +108,14 @@ public class SideBySide implements Serializable
     */
    public void init()
    {
+      if (begin.after(end) || (!end.before(DateUtils.truncate(new Date(), Calendar.DATE)))
+               && !DateUtils.isSameDay(end, new Date()))
+      {
+         end = DateUtils.truncate(new Date(), Calendar.DATE);
+         begin = DateUtils.addDays(end, -7);
+         range = getDateRange();
+      }
+
       if (techWords.isEmpty())
       {
          techWords = twitterService.getTrackKeywords();
@@ -120,12 +130,12 @@ public class SideBySide implements Serializable
             {
                if (!k.equals(left))
                {
-                  lastLeft = left;
                   setLeft(k);
                }
                break;
             }
          }
+         leftParam = null;
       }
       if (rightParam != null)
       {
@@ -135,33 +145,34 @@ public class SideBySide implements Serializable
             {
                if (!k.equals(right))
                {
-                  lastRight = right;
                   setRight(k);
                }
                break;
             }
          }
+         rightParam = null;
       }
 
       if (!techWords.isEmpty())
       {
 
-         if ((left == null) || (right == null))
+         if (left.equals(new Keyword()) || right.equals(new Keyword()))
          {
             HatchlingConfig config = settings.getConfig();
-            if (left == null)
+            if (left.equals(new Keyword()))
             {
                Keyword defaultLeft = config.getDefaultLeft();
                if ((defaultLeft != null) && techWords.contains(defaultLeft))
                {
-                  left = defaultLeft;
+                  setLeft(defaultLeft);
                }
                else
                {
-                  left = techWords.get(0);
+                  setLeft(techWords.get(0));
                }
             }
-            if (right == null)
+
+            if (right.equals(new Keyword()))
             {
                Keyword defaultRight = config.getDefaultRight();
                if ((defaultRight != null) && techWords.contains(defaultRight))
@@ -170,95 +181,25 @@ public class SideBySide implements Serializable
                }
                else
                {
-                  right = techWords.get(0);
-                  if (techWords.size() > 1)
+                  if (techWords.size() == 1)
                   {
-                     right = techWords.get(1);
+                     setRight(techWords.get(0));
+                  }
+                  else if (techWords.size() > 1)
+                  {
+                     setRight(techWords.get(1));
                   }
                }
             }
          }
       }
-
-      if ((begin == null) || (end == null))
-      {
-         end = DateUtils.truncate(new Date(), Calendar.DATE);
-         begin = DateUtils.addDays(end, -7);
-      }
-
-      updateChartData();
-   }
-
-   public List<Keyword> getTechWords()
-   {
-      return techWords;
-   }
-
-   public void setTechWords(final List<Keyword> techWords)
-   {
-      this.techWords = techWords;
-   }
-
-   public Keyword getLeft()
-   {
-      return left;
-   }
-
-   public void setLeft(final Keyword left)
-   {
-      this.left = left;
-      updateChartData();
-   }
-
-   public Keyword getRight()
-   {
-      return right;
-   }
-
-   public String getLeftLink() throws UnsupportedEncodingException
-   {
-      return left == null ? "" : URLEncoder.encode(left.getLabel().replaceAll("#", "%23"), "UTF-8");
-   }
-
-   public String getRightLink() throws UnsupportedEncodingException
-   {
-      return right == null ? "" : URLEncoder.encode(right.getLabel().replaceAll("#", "%23"), "UTF-8");
-   }
-
-   public void setRight(final Keyword right)
-   {
-      this.right = right;
-      updateChartData();
-   }
-
-   public Date getBegin()
-   {
-      return begin;
-   }
-
-   public void setBegin(final Date begin)
-   {
-      this.begin = begin;
-      updateChartData();
-   }
-
-   public Date getEnd()
-   {
-      return end;
-   }
-
-   public void setEnd(final Date end)
-   {
-      this.end = end;
-      updateChartData();
    }
 
    private void updateChartData()
    {
-
       boolean updateLeft = false;
       boolean updateRight = false;
-      if ((lastLeft == null) || (lastRight == null)
+      if ((lastLeft.equals(new Keyword())) || (lastRight.equals(new Keyword()))
                || !(DateUtils.isSameDay(lastBegin, begin) && DateUtils.isSameDay(lastEnd, end)))
       {
          updateLeft = true;
@@ -316,19 +257,21 @@ public class SideBySide implements Serializable
             }
             rightAverage = Math.round(rightAverage / rightTweetMap.values().size() * 100) / 100;
          }
+
+         // update cache triggers
+         lastLeft = left;
+         lastRight = right;
+
+         lastBegin = new Date(begin.getTime());
+         lastEnd = new Date(end.getTime());
       }
-
-      // update cache triggers
-      lastLeft = left;
-      lastRight = right;
-
-      lastBegin = new Date(begin.getTime());
-      lastEnd = new Date(end.getTime());
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public Object getChartData()
    {
+      updateChartData();
+
       Map data = new HashMap();
 
       List rows = new ArrayList();
@@ -379,6 +322,97 @@ public class SideBySide implements Serializable
       return range;
    }
 
+   public List<Tweet> extractSampleTweets(final List<Tweet> tweets)
+   {
+      if (tweets.size() > sampleSize)
+      {
+         List<Tweet> result = new ArrayList<Tweet>();
+         for (int i = 0; i < sampleSize; i++)
+         {
+            result.add(tweets.get(i));
+         }
+         return result;
+      }
+      return tweets;
+   }
+
+   /*
+    * Getters & Setters
+    */
+   public List<Keyword> getTechWords()
+   {
+      return techWords;
+   }
+
+   public void setTechWords(final List<Keyword> techWords)
+   {
+      this.techWords = techWords;
+   }
+
+   public Keyword getLeft()
+   {
+      return left;
+   }
+
+   public void setLeft(final Keyword left)
+   {
+      this.lastLeft = this.left;
+      this.left = left;
+   }
+
+   public Keyword getRight()
+   {
+      return right;
+   }
+
+   public void setRight(final Keyword right)
+   {
+      this.lastRight = this.right;
+      this.right = right;
+   }
+
+   public String getLeftLink() throws UnsupportedEncodingException
+   {
+      return left == null ? "" : URLEncoder.encode(left.getLabel().replaceAll("#", "%23"), "UTF-8");
+   }
+
+   public String getRightLink() throws UnsupportedEncodingException
+   {
+      return right == null ? "" : URLEncoder.encode(right.getLabel().replaceAll("#", "%23"), "UTF-8");
+   }
+
+   public Date getBegin()
+   {
+      return begin;
+   }
+
+   public void setBegin(final Date begin)
+   {
+      this.lastBegin = this.begin;
+      this.begin = begin;
+   }
+
+   public String getBeginFormat()
+   {
+      return dateFormat.format(begin);
+   }
+
+   public Date getEnd()
+   {
+      return end;
+   }
+
+   public void setEnd(final Date end)
+   {
+      this.lastEnd = this.end;
+      this.end = end;
+   }
+
+   public String getEndFormat()
+   {
+      return dateFormat.format(end);
+   }
+
    public List<Tweet> getLeftTweetSample()
    {
       return extractSampleTweets(leftTweets);
@@ -399,20 +433,6 @@ public class SideBySide implements Serializable
       this.rightTweets = rightTweets;
    }
 
-   public List<Tweet> extractSampleTweets(final List<Tweet> tweets)
-   {
-      if (tweets.size() > sampleSize)
-      {
-         List<Tweet> result = new ArrayList<Tweet>();
-         for (int i = 0; i < sampleSize; i++)
-         {
-            result.add(tweets.get(i));
-         }
-         return result;
-      }
-      return tweets;
-   }
-
    public Date getNow()
    {
       return new Date();
@@ -421,26 +441,6 @@ public class SideBySide implements Serializable
    public int getSampleSize()
    {
       return sampleSize;
-   }
-
-   public String getLeftParam()
-   {
-      return leftParam;
-   }
-
-   public void setLeftParam(final String leftParam)
-   {
-      this.leftParam = leftParam;
-   }
-
-   public String getRightParam()
-   {
-      return rightParam;
-   }
-
-   public void setRightParam(final String rightParam)
-   {
-      this.rightParam = rightParam;
    }
 
    public long getLeftTotal()
@@ -481,6 +481,69 @@ public class SideBySide implements Serializable
    public void setRightAverage(final double rightAverage)
    {
       this.rightAverage = rightAverage;
+   }
+
+   /**
+    * PrettyFaces Parameters
+    */
+   public String getBeginParam()
+   {
+      return null;
+   }
+
+   public String getEndParam()
+   {
+      return null;
+   }
+
+   public void setBeginParam(String beginParam)
+   {
+      if (beginParam != null)
+      {
+         try
+         {
+            setBegin(dateFormat.parse(beginParam));
+         }
+         catch (ParseException e)
+         {
+            // ignore
+         }
+      }
+   }
+
+   public void setEndParam(String endParam)
+   {
+      if (endParam != null)
+      {
+         try
+         {
+            setEnd(dateFormat.parse(endParam));
+         }
+         catch (ParseException e)
+         {
+            // ignore
+         }
+      }
+   }
+
+   public String getLeftParam()
+   {
+      return leftParam;
+   }
+
+   public void setLeftParam(final String leftParam)
+   {
+      this.leftParam = leftParam;
+   }
+
+   public String getRightParam()
+   {
+      return rightParam;
+   }
+
+   public void setRightParam(final String rightParam)
+   {
+      this.rightParam = rightParam;
    }
 
 }

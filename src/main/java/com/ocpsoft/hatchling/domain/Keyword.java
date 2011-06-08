@@ -139,7 +139,7 @@ public class Keyword implements Serializable, Comparable<Keyword>
          return 1;
       }
 
-      if ((this.text == null) && (other.getLabel() == null))
+      if ((this.getLabel() == null) && (other.getLabel() == null))
       {
          return 1;
       }
