@@ -358,6 +358,7 @@ public class SideBySide implements Serializable
    {
       this.lastLeft = this.left;
       this.left = left;
+      updateChartData();
    }
 
    public Keyword getRight()
@@ -369,6 +370,7 @@ public class SideBySide implements Serializable
    {
       this.lastRight = this.right;
       this.right = right;
+      updateChartData();
    }
 
    public String getLeftLink() throws UnsupportedEncodingException
@@ -390,6 +392,7 @@ public class SideBySide implements Serializable
    {
       this.lastBegin = this.begin;
       this.begin = begin;
+      updateChartData();
    }
 
    public String getBeginFormat()
@@ -406,6 +409,7 @@ public class SideBySide implements Serializable
    {
       this.lastEnd = this.end;
       this.end = end;
+      updateChartData();
    }
 
    public String getEndFormat()
