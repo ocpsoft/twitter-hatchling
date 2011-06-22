@@ -27,8 +27,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 import org.jboss.seam.cron.api.scheduling.Every;
@@ -46,21 +44,19 @@ public class TweetBuffer
 {
    private final Logger log = Logger.getLogger(TweetBuffer.class);
 
-   @Inject
-   private Instance<TwitterService> service;
-
    private final List<Tweet> buffer = new CopyOnWriteArrayList<Tweet>();
 
    private boolean dirty = false;
 
-   public void flushTweets(@Observes @Every(nth = 10, value = Interval.SECOND) final Trigger trigger)
+   public void flushTweets(@Observes @Every(nth = 10, value = Interval.SECOND) final Trigger trigger,
+            final TwitterService service)
    {
       try
       {
          if (!buffer.isEmpty())
          {
             log.info("Flushing [" + buffer.size() + "] tweets");
-            service.get().saveNewTweets(buffer);
+            service.saveNewTweets(buffer);
             dirty = true;
          }
       }
@@ -70,14 +66,15 @@ public class TweetBuffer
       }
    }
 
-   public void updateStats(@Observes @Every(nth = 5, value = Interval.MINUTE) final Trigger trigger)
+   public void updateStats(@Observes @Every(nth = 5, value = Interval.MINUTE) final Trigger trigger,
+            final TwitterService service)
    {
       try
       {
          if (dirty)
          {
             log.info("Updating stats.");
-            service.get().updateStats(new Date());
+            service.updateStats(new Date());
          }
       }
       finally
