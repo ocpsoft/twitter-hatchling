@@ -57,11 +57,6 @@
          <version>3.0.0.Final</version>
       </dependency>
       <dependency>
-         <groupId>org.jboss.seam.persistence</groupId>
-         <artifactId>seam-persistence</artifactId>
-         <version>3.0.1-SNAPSHOT</version>
-      </dependency>
-      <dependency>
          <groupId>org.jboss.seam.cron</groupId>
          <artifactId>seam-cron-api</artifactId>
          <version>3.0.0.Alpha1</version>
@@ -72,6 +67,11 @@
          <artifactId>seam-cron-scheduling-quartz</artifactId>
          <version>3.0.0.Alpha1</version>
          <scope>runtime</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.logging</groupId>
+         <artifactId>jboss-logging</artifactId>
+         <version>3.0.0.Beta4</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.seam.cron</groupId>
@@ -97,31 +97,6 @@
          <artifactId>hibernate-entitymanager</artifactId>
          <version>3.6.4.Final</version>
          <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.metawidget.modules</groupId>
-         <artifactId>metawidget-annotation</artifactId>
-         <version>1.20</version>
-      </dependency>
-      <dependency>
-         <groupId>org.metawidget.modules</groupId>
-         <artifactId>metawidget-java5</artifactId>
-         <version>1.20</version>
-      </dependency>
-      <dependency>
-         <groupId>org.metawidget.modules</groupId>
-         <artifactId>metawidget-beanvalidation</artifactId>
-         <version>1.20</version>
-      </dependency>
-      <dependency>
-         <groupId>org.metawidget.modules</groupId>
-         <artifactId>metawidget-jpa</artifactId>
-         <version>1.20</version>
-      </dependency>
-      <dependency>
-         <groupId>org.metawidget.modules.faces</groupId>
-         <artifactId>metawidget-faces</artifactId>
-         <version>1.20</version>
       </dependency>
 
       <!-- Test Dependencies -->

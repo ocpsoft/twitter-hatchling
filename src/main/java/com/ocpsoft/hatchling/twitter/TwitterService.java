@@ -7,16 +7,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.jboss.forge.persistence.PersistenceUtil;
 import org.jboss.logging.Logger;
-import org.jboss.seam.transaction.Transactional;
 
 import com.ocpsoft.hatchling.domain.DayStats;
 import com.ocpsoft.hatchling.domain.DayStatsKeyword;
@@ -26,12 +27,12 @@ import com.ocpsoft.hatchling.domain.TweetURL;
 import com.ocpsoft.hatchling.util.DateUtils;
 
 @Named
-@Transactional
+@Stateless
 public class TwitterService extends PersistenceUtil
 {
    Logger log = Logger.getLogger(TwitterService.class);
 
-   @Inject
+   @PersistenceContext
    private EntityManager manager;
 
    @Inject

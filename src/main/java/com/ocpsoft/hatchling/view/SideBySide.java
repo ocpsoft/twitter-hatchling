@@ -108,8 +108,8 @@ public class SideBySide implements Serializable
     */
    public void init()
    {
-      if (begin.after(end) || (!end.before(DateUtils.truncate(new Date(), Calendar.DATE)))
-               && !DateUtils.isSameDay(end, new Date()))
+      if (begin.after(end) || ((!end.before(DateUtils.truncate(new Date(), Calendar.DATE)))
+               && !DateUtils.isSameDay(end, new Date())))
       {
          end = DateUtils.truncate(new Date(), Calendar.DATE);
          begin = DateUtils.addDays(end, -7);
@@ -195,7 +195,7 @@ public class SideBySide implements Serializable
       }
    }
 
-   private void updateChartData()
+   public void updateChartData()
    {
       boolean updateLeft = false;
       boolean updateRight = false;
@@ -216,7 +216,7 @@ public class SideBySide implements Serializable
          List<DayStats> stats = twitterService.getStats(begin, end);
          range = getDateRange();
 
-         if (updateLeft)
+         if (updateLeft && (left != null) && (left.getLabel() != null))
          {
             leftTweetMap = new HashMap<Date, Long>();
             for (Date date : range)
@@ -237,7 +237,7 @@ public class SideBySide implements Serializable
             leftAverage = Math.round(leftAverage / leftTweetMap.values().size() * 100 / 100);
          }
 
-         if (updateRight)
+         if (updateRight && (right != null) && (right.getLabel() != null))
          {
             rightTweetMap = new HashMap<Date, Long>();
             for (Date date : range)
@@ -358,7 +358,6 @@ public class SideBySide implements Serializable
    {
       this.lastLeft = this.left;
       this.left = left;
-      updateChartData();
    }
 
    public Keyword getRight()
@@ -370,7 +369,6 @@ public class SideBySide implements Serializable
    {
       this.lastRight = this.right;
       this.right = right;
-      updateChartData();
    }
 
    public String getLeftLink() throws UnsupportedEncodingException
@@ -392,7 +390,6 @@ public class SideBySide implements Serializable
    {
       this.lastBegin = this.begin;
       this.begin = begin;
-      updateChartData();
    }
 
    public String getBeginFormat()
@@ -409,7 +406,6 @@ public class SideBySide implements Serializable
    {
       this.lastEnd = this.end;
       this.end = end;
-      updateChartData();
    }
 
    public String getEndFormat()
@@ -500,7 +496,7 @@ public class SideBySide implements Serializable
       return null;
    }
 
-   public void setBeginParam(String beginParam)
+   public void setBeginParam(final String beginParam)
    {
       if (beginParam != null)
       {
@@ -515,7 +511,7 @@ public class SideBySide implements Serializable
       }
    }
 
-   public void setEndParam(String endParam)
+   public void setEndParam(final String endParam)
    {
       if (endParam != null)
       {

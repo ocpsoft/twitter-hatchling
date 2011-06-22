@@ -4,33 +4,39 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.jboss.forge.persistence.PaginationHelper;
 import org.jboss.forge.persistence.PersistenceUtil;
-import org.jboss.seam.transaction.Transactional;
 
 import com.ocpsoft.hatchling.domain.Keyword;
 
 @Named
-@Transactional
+@Stateful
 @RequestScoped
 public class FilterTrackBean extends PersistenceUtil
 {
-   @Inject
+   private static final long serialVersionUID = 6866936433182018079L;
+
+   @PersistenceContext
    private EntityManager manager;
 
    private List<Keyword> list = null;
    private Keyword filtertrack = new Keyword();
-   private long id = 0;
+   private String id = "";
+   private boolean editMode = false;
    private PaginationHelper<Keyword> pagination;
 
    public void load()
    {
-      filtertrack = findById(Keyword.class, id);
+      TypedQuery<Keyword> query = manager.createQuery("from Keyword k where k.label = :label", Keyword.class);
+      query.setParameter("label", id);
+      filtertrack = query.getSingleResult();
    }
 
    public String create()
@@ -38,7 +44,7 @@ public class FilterTrackBean extends PersistenceUtil
       filtertrack.setText(filtertrack.getText().replaceAll("\\s*,\\s*", ","));
       filtertrack.setCreatedOn(new Date());
       create(filtertrack);
-      return "view?faces-redirect=true&id=" + filtertrack.getId();
+      return "view?faces-redirect=true&id=" + filtertrack.getLabel();
    }
 
    public String delete()
@@ -51,21 +57,17 @@ public class FilterTrackBean extends PersistenceUtil
    {
       filtertrack.setText(filtertrack.getText().replaceAll("\\s*,\\s*", ","));
       save(filtertrack);
-      return "view?faces-redirect=true&id=" + filtertrack.getId();
+      return "view?faces-redirect=true&id=" + filtertrack.getLabel();
    }
 
-   public long getId()
+   public String getId()
    {
       return id;
    }
 
-   public void setId(final long id)
+   public void setId(final String id)
    {
       this.id = id;
-      if (id > 0)
-      {
-         load();
-      }
    }
 
    public Keyword getFilterTrack()
@@ -137,5 +139,15 @@ public class FilterTrackBean extends PersistenceUtil
    protected EntityManager getEntityManager()
    {
       return manager;
+   }
+
+   public void setEditMode(final boolean editMode)
+   {
+      this.editMode = editMode;
+   }
+
+   public boolean isEditMode()
+   {
+      return editMode;
    }
 }

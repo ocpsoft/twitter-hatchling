@@ -4,8 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:m="http://metawidget.org/faces">
+    xmlns:ui="http://java.sun.com/jsf/facelets" >
 
 <f:metadata>
 </f:metadata>
@@ -30,7 +29,8 @@
 		
 		    <h:messages globalOnly="true" />
 		    
-		    <m:metawidget value="#{filterTrackBean.filterTrack}" readOnly="#{false}" />
+		    Label: <h:inputText value="#{filterTrackBean.filterTrack.label}" /><br/>
+		    Text: <h:inputText value="#{filterTrackBean.filterTrack.text}" /><br/>
 		    
 		    <br/>
 		    <h:button value="Cancel" outcome="list" />

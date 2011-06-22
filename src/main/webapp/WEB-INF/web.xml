@@ -11,19 +11,11 @@
    </welcome-file-list>
    <context-param> 
       <param-name>javax.faces.PROJECT_STAGE</param-name>
-      <param-value>Production</param-value>
+      <param-value>Development</param-value>
    </context-param>
    <context-param>
       <param-name>javax.faces.SKIP_COMMENTS</param-name>
       <param-value>true</param-value>
-   </context-param>
-   <context-param>
-      <param-name>org.metawidget.faces.component.DONT_USE_PRERENDER_VIEW_EVENT</param-name>
-      <param-value>true</param-value>
-   </context-param>
-   <context-param>
-      <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
-      <param-value>false</param-value>
    </context-param>
    <context-param>
       <param-name>javax.faces.STATE_SAVING_METHOD</param-name>

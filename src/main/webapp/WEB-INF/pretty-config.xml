@@ -10,6 +10,7 @@
 		<query-param onPostback="false" name="begin">#{sideBySide.beginParam}</query-param>
 		<view-id value="/faces/index.xhtml" />
 		<action>#{sideBySide.init}</action>
+        <action phaseId="RENDER_RESPONSE">#{sideBySide.updateChartData}</action>
 	</url-mapping>
 	<url-mapping id="admin">
 		<pattern value="/nimda" />
@@ -25,8 +26,10 @@
 		<view-id value="/faces/scaffold/keyword/list.xhtml" />
 	</url-mapping>
 	<url-mapping id="filtertrack-view">
-		<pattern value="/filter/#{id}" />
+		<pattern value="/filter/#{ id : filterTrackBean.id}" />
+        <query-param name="edit">#{filterTrackBean.editMode}</query-param>
 		<view-id value="/faces/scaffold/keyword/view.xhtml" />
+        <action>#{filterTrackBean.load}</action>
 	</url-mapping>
 	<url-mapping id="logout">
 		<pattern value="/logout"></pattern>

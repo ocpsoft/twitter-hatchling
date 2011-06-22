@@ -21,13 +21,13 @@
  */
 package com.ocpsoft.hatchling.config;
 
-import javax.inject.Inject;
+import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.jboss.forge.persistence.PersistenceUtil;
 import org.jboss.logging.Logger;
-import org.jboss.seam.transaction.Transactional;
 
 import com.ocpsoft.hatchling.domain.HatchlingConfig;
 
@@ -36,14 +36,14 @@ import com.ocpsoft.hatchling.domain.HatchlingConfig;
  * 
  */
 @Named
-@Transactional
+@Stateless
 public class SettingsService extends PersistenceUtil
 {
    private static final long serialVersionUID = 352640474001730720L;
 
    Logger log = Logger.getLogger(SettingsService.class);
 
-   @Inject
+   @PersistenceContext
    private EntityManager manager;
 
    @Override
@@ -63,7 +63,7 @@ public class SettingsService extends PersistenceUtil
       return config;
    }
 
-   public void saveConfig(HatchlingConfig config)
+   public void saveConfig(final HatchlingConfig config)
    {
       manager.joinTransaction();
       save(config);

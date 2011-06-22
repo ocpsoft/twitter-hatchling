@@ -1,9 +1,9 @@
 package com.ocpsoft.hatchling.twitter;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 
 import org.jboss.seam.servlet.event.Destroyed;
@@ -20,7 +20,7 @@ import com.ocpsoft.hatchling.config.SettingsService;
 import com.ocpsoft.hatchling.domain.HatchlingConfig;
 
 @Named
-@ApplicationScoped
+@Singleton
 public class TwitterStreamHandler
 {
    @Inject
@@ -85,7 +85,8 @@ public class TwitterStreamHandler
 
    public void stop()
    {
-      twitterStream.cleanUp();
+      if (twitterStream != null)
+         twitterStream.cleanUp();
       streaming = false;
    }
 

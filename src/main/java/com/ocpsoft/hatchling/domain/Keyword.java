@@ -15,7 +15,6 @@ import javax.persistence.Version;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Index;
-import org.metawidget.inspector.annotation.UiHidden;
 
 @Entity
 @Table(name = "keywords")
@@ -38,7 +37,6 @@ public class Keyword implements Serializable, Comparable<Keyword>
    @Column(unique = true, nullable = false, length = 60)
    private String text;
 
-   @UiHidden
    @Temporal(TemporalType.TIMESTAMP)
    private Date createdOn;
 

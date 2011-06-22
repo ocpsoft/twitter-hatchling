@@ -5,16 +5,9 @@
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core"
     xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:m="http://metawidget.org/faces"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <f:metadata>
-    <f:viewParam name="id" value="#{filterTrackBean.id}">
-        <f:validateLongRange minimum="1" />
-    </f:viewParam>
-    <f:viewParam name="edit" value="#{_editMode}">
-        <f:validateRegex pattern="(|true|false)" />
-    </f:viewParam>
 </f:metadata>
 
 <ui:composition template="/resources/forge-template.xhtml">
@@ -37,21 +30,32 @@
 		    <h:messages globalOnly="true"/>
 		    <br/>
 		
-		    <h:button value="View all" outcome="list" rendered="#{ _editMode == null or _editMode eq 'false' }" />
-		    <h:button value="Edit" outcome="view" includeViewParams="true" rendered="#{ _editMode == null or _editMode eq 'false' }">
+		    <h:button value="View all" outcome="list" rendered="#{ !filterTrackBean.editMode }" />
+		    <h:button value="Edit" outcome="view" rendered="#{ !filterTrackBean.editMode }">
 		        <f:param name="edit" value="true" />
+		        <f:param name="id" value="#{filterTrackBean.id}" />
 		    </h:button>
-		    <h:button value="Create new" outcome="create" rendered="#{ _editMode == null or _editMode eq 'false' }" />
+		    <h:button value="Create new" outcome="create" rendered="#{ !filterTrackBean.editMode }" />
 		    <br/>
 		    
-		    <m:metawidget value="#{filterTrackBean.filterTrack}" readOnly="#{ _editMode == null or _editMode eq 'false' }" />
+		    <h:outputText value="Created On: #{filterTrackBean.filterTrack.createdOn}" /><br/>
+		    
+		    <h:panelGroup rendered="#{ filterTrackBean.editMode }">
+			    Label: <h:inputText value="#{filterTrackBean.filterTrack.label}" /><br/>
+			    Text: <h:inputText value="#{filterTrackBean.filterTrack.text}" /><br/>
+		    </h:panelGroup>
+		    
+		    <h:panelGroup rendered="#{ !filterTrackBean.editMode }">
+			    Label: <h:outputText value="#{filterTrackBean.filterTrack.label}" /><br/>
+			    Text: <h:outputText value="#{filterTrackBean.filterTrack.text}" /><br/>
+		    </h:panelGroup>
 		    
 		    <br/>
-			<c:if test="#{ _editMode != null and _editMode ne 'false' }">
+			<c:if test="#{ filterTrackBean.editMode }">
 				<h:commandButton value="Save" action="#{filterTrackBean.save()}" />
 			</c:if>
 		    <h:commandButton value="Delete" action="#{filterTrackBean.delete()}" />
-		    <h:button value="Cancel" outcome="view" includeViewParams="true" rendered="#{ _editMode != null and _editMode ne 'false' }">
+		    <h:button value="Cancel" outcome="view" includeViewParams="true" rendered="#{ filterTrackBean.editMode }">
 				<f:param name="edit" value="false" />
 			</h:button>
 		</h:form>

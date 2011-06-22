@@ -4,8 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
     xmlns:h="http://java.sun.com/jsf/html"
     xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:m="http://metawidget.org/faces">
+    xmlns:ui="http://java.sun.com/jsf/facelets">
 
 <f:metadata>
     <f:viewParam name="id" value="#{filterTrackBean.id}">
@@ -38,11 +37,9 @@
 		    
 		    <ul>
 		    <ui:repeat var="entity" value="#{filterTrackBean.list}">
-		        <li>#{entity.id} <h:button outcome="view" value="[view]">
-		            <f:param name="id" value="#{entity.id}"/>
-		        </h:button> 
-		        
-		        <m:metawidget value="#{entity}" readOnly="#{ 'true' }" />
+		        <li>#{entity.id} <h:link outcome="view" value="[view]">
+		            <f:param name="id" value="#{entity.label}"/>
+		        </h:link>  <h:outputText value="#{entity.label}" /><br/>
 		        
 		         </li>
 		    </ui:repeat>
