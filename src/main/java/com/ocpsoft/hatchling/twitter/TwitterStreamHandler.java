@@ -54,10 +54,10 @@ public class TwitterStreamHandler
                .setHttpRetryIntervalSeconds(15000)
                .setHttpStreamingReadTimeout(150000)
                .setHttpReadTimeout(15000)
-                .setOAuthConsumerKey(conf.getConsumerKey())
-                .setOAuthConsumerSecret(conf.getConsumerSecret())
+               .setOAuthConsumerKey(conf.getConsumerKey())
+               .setOAuthConsumerSecret(conf.getConsumerSecret())
                .setOAuthAccessToken(conf.getAccessToken())
-                .setOAuthAccessTokenSecret(conf.getAccessTokenSecret())
+               .setOAuthAccessTokenSecret(conf.getAccessTokenSecret())
                .build();
 
       auth = AuthorizationFactory.getInstance(config);
@@ -75,8 +75,7 @@ public class TwitterStreamHandler
             throw new RuntimeException("Must add Filters before streaming may begin.");
          }
          FilterQuery filter = new FilterQuery()
-                     .track(filters)
-                  .setIncludeEntities(true);
+                  .track(filters);
 
          twitterStream.filter(filter);
          streaming = true;

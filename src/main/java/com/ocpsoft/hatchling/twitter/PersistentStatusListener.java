@@ -23,6 +23,7 @@ package com.ocpsoft.hatchling.twitter;
 
 import org.jboss.logging.Logger;
 
+import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
@@ -45,6 +46,7 @@ public class PersistentStatusListener implements StatusListener
       this.buffer = buffer;
    }
 
+   @Override
    public void onStatus(final Status status)
    {
       Tweet t = new Tweet();
@@ -52,7 +54,7 @@ public class PersistentStatusListener implements StatusListener
       t.setText(status.getText());
       t.setScreenName(status.getUser().getScreenName());
       t.setUserName(status.getUser().getName());
-      t.setUserProfileImageURL(status.getUser().getProfileImageURL().toExternalForm());
+      t.setUserProfileImageURL(status.getUser().getProfileImageURL());
       t.setProfileURL(null);
       t.setTweetId(status.getId());
 
@@ -64,11 +66,11 @@ public class PersistentStatusListener implements StatusListener
             TweetURL tweetURL = new TweetURL();
             if (url.getExpandedURL() != null)
             {
-               tweetURL.setURL(url.getExpandedURL().toExternalForm());
+               tweetURL.setURL(url.getExpandedURL());
             }
             else if (url.getURL() != null)
             {
-               tweetURL.setURL(url.getURL().toExternalForm());
+               tweetURL.setURL(url.getURL());
             }
             t.getURLs().add(tweetURL);
          }
@@ -77,14 +79,17 @@ public class PersistentStatusListener implements StatusListener
       buffer.add(t);
    }
 
+   @Override
    public void onDeletionNotice(final StatusDeletionNotice statusDeletionNotice)
    {
    }
 
+   @Override
    public void onTrackLimitationNotice(final int numberOfLimitedStatuses)
    {
    }
 
+   @Override
    public void onException(final Exception ex)
    {
       ex.printStackTrace();
@@ -93,5 +98,12 @@ public class PersistentStatusListener implements StatusListener
    @Override
    public void onScrubGeo(final long arg0, final long arg1)
    {
+   }
+
+   @Override
+   public void onStallWarning(StallWarning arg0)
+   {
+      // TODO Auto-generated method stub
+      
    }
 }

@@ -23,12 +23,12 @@
       <dependency>
          <groupId>org.twitter4j</groupId>
          <artifactId>twitter4j-core</artifactId>
-         <version>2.2.2</version>
+         <version>3.0.5</version>
       </dependency>
       <dependency>
          <groupId>org.twitter4j</groupId>
          <artifactId>twitter4j-stream</artifactId>
-         <version>2.2.2</version>
+         <version>3.0.5</version>
       </dependency>
 
       <!-- OCPSoft Libraries -->
@@ -38,9 +38,14 @@
          <version>1.0.7</version>
       </dependency>
       <dependency>
-         <groupId>com.ocpsoft</groupId>
-         <artifactId>prettyfaces-jsf2</artifactId>
-         <version>3.3.0-SNAPSHOT</version>
+         <groupId>org.ocpsoft.rewrite</groupId>
+         <artifactId>rewrite-servlet</artifactId>
+         <version>2.0.8.Final</version>
+      </dependency>
+      <dependency>
+         <groupId>org.ocpsoft.rewrite</groupId>
+         <artifactId>rewrite-config-prettyfaces</artifactId>
+         <version>2.0.8.Final</version>
       </dependency>
 
       <!-- Seam 3 Libraries -->

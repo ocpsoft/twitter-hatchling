@@ -253,7 +253,7 @@ const skippedElements = {
   label:    true,
   select:   true,
   button:   true
-}
+};
 
 const gmail = (location.host == "gmail.google.com");
 
